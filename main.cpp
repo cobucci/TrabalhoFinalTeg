@@ -3,7 +3,7 @@
 int main(){
 
     int V = 6;
-	Grafo grafo(V);
+    Grafo grafo(V);
     vector <pair <double, double> > coord;
     gerandoCoord(coord, V);
     grafo.gerandoLigacaoEPesoAresta(V, coord);
