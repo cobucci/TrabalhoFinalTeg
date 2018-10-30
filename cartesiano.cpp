@@ -2,6 +2,7 @@
 
 void gerandoCoord(vector <pair <double, double> > &coord, int quantidade){
 
+    cout << "CRIANDO COORDENADAS ALEATORIAS" << endl;
     srand(time(NULL));
     for(int i=0 ; i<quantidade ; i++){
 
@@ -10,7 +11,7 @@ void gerandoCoord(vector <pair <double, double> > &coord, int quantidade){
         y = (double)rand()/RAND_MAX*1.000-0.000;
         pair <double, double> coordenada (x, y);
         coord.push_back(coordenada);
-        //printf("(%.3lf , %.3lf)\n", coordenada.first, coordenada.second);       
+        printf("%d -> (%.3lf , %.3lf)\n", i, coordenada.first, coordenada.second);       
     }  
 }
 
@@ -31,13 +32,15 @@ void Grafo::gerandoLigacaoEPesoAresta(int vertices, vector <pair <double, double
     int dif = max-min;
     //v3 = rand() % 30 + 1985;   // v3 in the range 1985-2014
     int quantidadeArestas = rand() % dif + min;
+    cout << "QUANTIDADE DE ARESTAS = " << quantidadeArestas << endl;
     vector <pair <int, int> > coord; //esta inteiro pq ira referenciar o indice do vetor de coordenadas, que tera (double, double)
+    
     for(int i=0 ; i<quantidadeArestas ; i++){
 
         int x, y;
         x = rand() % vertices;
         y = rand() % vertices;
-        while(x == y || !verificaPar(coord, x, y)){
+        while(x == y || !verificaPar(coord, x, y)){ //x!=y && a coord(x,y) nao pode ter sido colocada ainda
             x = rand() % vertices;
             y = rand() % vertices;
         }
@@ -46,12 +49,12 @@ void Grafo::gerandoLigacaoEPesoAresta(int vertices, vector <pair <double, double
         coord.push_back(coordenada);
     }
 
-    /*
+    cout << "LIGACOES ENTRE QUAIS PONTOS" << endl;
      for(int i=0 ; i<coord.size() ; i++){
 
         printf("(%d , %d)\n", coord[i].first, coord[i].second);
     }
-    */
+    
     
     for(int i=0 ; i<coord.size() ; i++){
 
@@ -60,10 +63,11 @@ void Grafo::gerandoLigacaoEPesoAresta(int vertices, vector <pair <double, double
         double x2 = coordDouble[ coord[i].second ].first;
         double y2 = coordDouble[ coord[i].second ].second;
         double peso = distanciaEntreDoisPonto(x1, y1, x2, y2);
+        
         /*
-        cout << x1 << " " << y1 << " " << x2 << " " << y2 << endl;
-        cout << peso << endl << endl << endl;
-        */
+        printf("( %.3lf , %.3lf ) | ( %.3lf , %.3lf )\n", x1, y1, x2,y2);
+        cout << peso << endl;
+        */  
         
         pair <int, double> p1 (coord[i].second, peso);
         adicionarAresta(coord[i].first, p1);
@@ -94,15 +98,15 @@ bool verificaPar(vector <pair <int, int> > coord, int x, int y){
 
 
 void Grafo::printGrafo(int v, vector <pair <double, double> > &coordDouble){
-    list<int>::iterator it;
+
     cout << "IMPRIMINDO GRAFO" << endl;
     for(int i=0 ; i<v ; i++){
 
         printf("COORDERNADA (%.3lf , %.3lf) tem ligacao com: \n", coordDouble[i].first, coordDouble[i].second);
-        for(it = adj[v].begin(); it != adj[v].end(); it++){
+        for(int j=0 ; j<adj[i].size() ; j++){
 
-            int aux1 = adj[*it].first;
-            printf("\tCOORDERNADA (%.3lf , %.3lf) com peso = : %.3lf\n", coordDouble[i].first, coordDouble[i].second, adj[*it].second);
+            int aux1 = adj[i][j].first;
+            printf("\tCOORDERNADA (%.3lf , %.3lf) com peso = : %.3lf\n", coordDouble[aux1].first, coordDouble[aux1].second, adj[i][j].second);
         }
     }
 
@@ -114,12 +118,20 @@ void Grafo::printGrafo(int v, vector <pair <double, double> > &coordDouble){
 
 Grafo::Grafo(int V){
 	this->V = V; // atribui o número de vértices
-	adj = new list<pair <int, double> >[V]; // cria as listas
+	//adj = new vector < vector < pair <int, double> > >; // cria as listas
+    
+    for(int i=0 ; i<V ; i++){
+        adj.push_back(vector < pair <int, double> > ());
+        //coord.push_back(vector < pair <int, double> > ());
+        ////mind.push_back(vector <int> ());
+    }
 }
 
 void Grafo::adicionarAresta(int v1, pair<int, double> par){
 	// adiciona vértice v2 à lista de vértices adjacentes de v1
 	adj[v1].push_back(par);
+    //printf("adj[%d] -> ( %d , %.3lf )\n\n\n", v1, par.first, par.second);
+    
 }
 
 /*
