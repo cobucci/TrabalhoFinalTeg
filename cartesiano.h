@@ -16,8 +16,7 @@ using namespace std;
 
 class Grafo{
 	int V; // número de vértices
-	list <pair <int, double> > *adj; // ponteiro para um array contendo as listas de adjacências
-
+	vector < vector < pair <int, double> > > adj; // ponteiro para um array contendo as listas de adjacências
 public:
 	Grafo(int V); // construtor
 	void adicionarAresta(int v1, pair<int, double> par); // adiciona uma aresta no grafo
