@@ -238,11 +238,9 @@ void Grafo::DFS(vector <pair <double, double> > &coordDouble){
             }
 
             bool achou = false;
-            //list<int>::iterator it;
 
             // buscando por um vizinho não visitado
             for(j=0 ; j<adj[v].size() ; j++){
-                //it = adj[v].begin(); it != adj[v].end(); it++
                 if(!visitados[adj[v][j].first]){
                     achou = true;
                     int qualCoord = qualCoordenada(coordDouble, coordDouble[adj[v][j].first].first, coordDouble[adj[v][j].first].second);
@@ -274,7 +272,7 @@ void Grafo::DFSModificado(vector <pair <double, double> > &coordDouble){
     
     int v = minimo(coordDouble);
     //int v=0;
-    cout << "\n\n\n\n\n\n\nRODANDO DFS MODIFICADO\nVALOR DA RAIZ INICIAL EH = " << v << endl<< endl << endl;
+    cout << "\n\n\n\n\n\n\nRODANDO DFS PARA GRAFO DIRECIONADO\nVALOR DA RAIZ INICIAL EH = " << v << endl<< endl << endl;
 
     stack<int> pilha;
     int j=0;
@@ -338,10 +336,11 @@ int minimo (vector <pair <double, double> > c){
     return retorno;
 }
 
-void Grafo::BFSAleatorio() //ARRUMAR PRA NAO COMECAR DO 0
+void Grafo::BFSAleatorio(vector <pair <double, double> > &coordDouble)
 { 
-    // Mark all the vertices as not visited
-    int s=0;
+
+    int s = rand() % V;
+    cout << "\n\nBFS com inicio em " << s << endl;
     int j;
     bool *visited = new bool[V]; 
     for(int i = 0; i < V; i++) 
@@ -351,110 +350,206 @@ void Grafo::BFSAleatorio() //ARRUMAR PRA NAO COMECAR DO 0
     list<int> queue; 
   
     // Mark the current node as visited and enqueue it 
-    visited[s] = true; 
+    visited[s] = true;
+    vector <int> ordem;
+    vector <int> origem;
+    vector <int> nivel; 
     queue.push_back(s); 
-  
-    // 'i' will be used to get all adjacent 
-    // vertices of a vertex 
-    list<int>::iterator i; 
-  
+    origem.push_back(-1);
+    
+    
     while(!queue.empty()) 
     { 
-        // Dequeue a vertex from queue and print it 
+        
         s = queue.front(); 
-        cout << s << " "; 
+        cout << s << " ";
+        ordem.push_back(s); 
         queue.pop_front(); 
   
-        // Get all adjacent vertices of the dequeued 
-        // vertex s. If a adjacent has not been visited,  
-        // then mark it visited and enqueue it 
+
         for (j=0 ; j<adj[s].size() ; j++) 
         { 
             if (!visited[adj[s][j].first]) 
             { 
                 visited[adj[s][j].first] = true; 
-                queue.push_back(adj[s][j].first); 
+                queue.push_back(adj[s][j].first);
+                origem.push_back(s); 
             } 
         } 
     } 
+    cout << endl;
+    /*
+    for(int i=0 ; i<origem.size() ; i++){
+        cout << ordem[i] << " " << origem[i] << endl;
+    }
+    */
+
 }
 
 
 
-//PARA VER SE EH CONEXO
-/*
- * Adiciona Aresta para conectar v e w
- */
-void Graph::addAresta(int v, int w){
-    adj[v].push_back(w);
-    adj[w].push_back(v);
+
+int Grafo::minDistance(double dist[], bool sptSet[]) { 
+   
+   double min = 10000.00;
+   int min_index; 
+   
+   for (int v = 0; v < V; v++){
+       if (sptSet[v] == false && dist[v] <= min){
+            min = dist[v];
+            min_index = v;
+        }
+   } 
+   return min_index; 
+} 
+   
+
+void Grafo::printDistancia(double dist[], int n) 
+{ 
+   printf("\n\nVERTICE \tDISTANCIA ATE %d\n", n); 
+   for (int i = 0; i < V; i++) 
+      printf("%d  \t\t  %.4lf\n", i, dist[i]); 
+} 
+   
+ 
+void Grafo::dijkstra() 
+{ 
+     int src = rand() % V;
+     //cout << "FONTE = " << src << endl;
+     double dist[V];   
+     bool sptSet[V];  
+     for (int i = 0; i < V; i++){
+         dist[i] = 10000.0;
+         sptSet[i] = false; 
+     }
+
+     dist[src] = 0.0;
+     for (int count = 0; count < V; count++){ 
+
+       int u = minDistance(dist, sptSet); 
+       sptSet[u] = true;
+    
+
+        //lista de adjacencia de u
+       for (int v = 0; v < adj[u].size(); v++){
+           /*
+                se spt[na posicao adjacente] for false
+                se a dist[u] for diferente de 10000.0
+                se dist[u] + adj[u][v].second < dist[adj[u][v].first]
+           */
+            if (!sptSet[adj[u][v].first] && dist[u] != 10000.0 && dist[u] + adj[u][v].second < dist[adj[u][v].first]){
+                dist[adj[u][v].first] = dist[u] + adj[u][v].second;
+            }       
+        } 
+     } 
+     printDistancia(dist, src);
+     //dijkstra2(src);  
 }
-/*
- *  A recursive function to print BFS starting from s
- */
-void Graph::BFS(int s, bool visited[]){
-    list<int> q;
-    list<int>::iterator i;
 
-    visited[s] = true;
+void Grafo::dijkstra2(int src){
 
-    q.push_back(s);
+    for(int i=0 ; i<V ; i++){
 
-    while (!q.empty()){
-        s = q.front();
-        q.pop_front();
-        for(i = adj[s].begin(); i != adj[s].end(); ++i){
-            if(!visited[*i]){
-                visited[*i] = true;
-                q.push_back(*i);
+        if(src == i){
+            cout << "vertice " << i << endl;
+            cout << "tam = 0" << endl << endl;
+
+        }
+        else{
+
+            vector <vector <int>> caminhoCompleto;
+            vector <double> pesoCompleto;
+            
+            vector <int> pilha;
+            pilha.push_back(i);
+            double tamCaminho=0;
+            bool podem[V];
+            for(int i=0 ; i<V ; i++){
+                podem[i] = true;
             }
+            //podem[src] = false;
+            vector <int> pesos;
+
+            while(!pilha.empty()){
+                pair <int, double> par;
+                cout << "topo = " << pilha.back() << endl;
+                std::this_thread::sleep_for (std::chrono::seconds(1));
+                if(pegarAdjacente(pilha, podem, par)){
+                    pilha.push_back(par.first);
+                    tamCaminho += par.second;
+                    pesos.push_back(par.second);
+            
+                    
+                    if(pilha.back() == src){
+                        cout << "Oi" << endl;
+                        insereCaminhosCompletos(caminhoCompleto, pesoCompleto, pilha, tamCaminho);
+                        podem[pilha.back()] = true;
+                        pilha.pop_back();
+                        double p = pesos.back();
+                        pesos.pop_back();
+                        tamCaminho -= p;    
+                    }
+                    
+                }
+                else{
+                    pilha.pop_back();
+                    double p = pesos.back();
+                    pesos.pop_back();
+                    tamCaminho -= p;
+                }
+                
+            }
+            cout << "vertice " << i << endl;
+            escolherMelhorCaminho(caminhoCompleto, pesoCompleto);
         }
     }
+
 }
-/*
- * Função que retorna a Transposta do Grafo
- */
-Graph Graph::getTranspose(){
-    Graph g(V);
 
-    for (int v = 0; v < V; v++){
-        list<int>::iterator i;
+bool Grafo::pegarAdjacente(vector <int> caminho, bool *podem, pair <int, double> &par){
 
-        for(i = adj[v].begin(); i != adj[v].end(); ++i){
-            g.adj[*i].push_back(v);
+
+    for(int j=0 ; j<adj[caminho.back()].size() ; j++){
+            cout << adj[caminho.back()][j].first << " " << endl;
+    }
+    
+
+    for(int i=0 ; i<adj[caminho.back()].size() ; i++){
+
+        if(podem[ adj[caminho.back()][i].first ] ){
+            par = make_pair(adj[caminho.back()][i].first, adj[caminho.back()][i].second);
+            podem[ adj[caminho.back()][i].first ] = false;
+            return true;
         }
     }
-    return g;
+    podem[caminho.back()] = true;
+    return false;
 }
 
-/*
- * Verifica se o Grafo é Conexo
- */
-bool Graph::isConnected(){
-    bool visited[V];
+void Grafo::insereCaminhosCompletos(vector < vector <int> > &cc, vector <double> &pc, vector <int> pilha, double peso){
 
-    for (int i = 0; i < V; i++)
-        visited[i] = false;
+    cc.push_back(vector <int> ());
+    for(int i=0 ; i<pilha.size() ; i++){
 
-    BFS(0, visited);
-
-    for (int i = 0; i < V; i++)
-        if (visited[i] == false)
-            return false;
-
-    Graph gr = getTranspose();
-
-    for(int i = 0; i < V; i++)
-        visited[i] = false;
-
-    gr.BFS(0, visited);
-
-    for (int i = 0; i < V; i++)
-        if (visited[i] == false)
-            return false;
-
-    return true;
-
+        cc[cc.size()-1].push_back(pilha[i]);
+    }
+    pc.push_back(peso);
 }
 
+void Grafo::escolherMelhorCaminho(vector < vector <int> > &cc, vector <double> &pc){
 
+    double menor = 10000.00;
+    int posi=0;
+    for(int i=0 ; i<pc.size() ; i++){
+        if(pc[i] < menor){
+            menor = pc[i];
+            posi = i;
+        }
+    }
+
+    for(int i=0 ; i<cc[posi].size() ; i++){
+        cout << cc[posi][i] << " ";
+    }
+    cout << endl;
+    cout << "tam = " << menor << endl << endl;
+}
