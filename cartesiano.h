@@ -12,6 +12,7 @@
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 #include <math.h>       /* log */
+#include <limits.h>
 
 using namespace std;
 
@@ -25,11 +26,19 @@ public:
     void gerandoLigacaoEPesoAresta(int vertices, vector <pair <double, double> > &coordDouble);
 	void DFS(vector <pair <double, double> > &coordDouble);
 	void DFSModificado(vector <pair <double, double> > &coordDouble);
-	void BFSAleatorio();
+	void BFSAleatorio(vector <pair <double, double> > &coordDouble);
 	int qualCoordenada(vector <pair <double, double> > coordDouble, double x, double y);
 	void maisProximos(vector <pair <double, double> > coordDouble, int *vI, double *vD, int i, int qa);
 	int qualPosicaoNoVetor(double *aux, double x);
-    //void dfs(int v);
+	void printDistancia(double dist[], int n);
+	void dijkstra();
+	int minDistance(double dist[], bool sptSe[]);
+
+	void dijkstra2(int src);
+	bool pegarAdjacente(vector <int> caminho, bool *podem, pair <int, double> &par);
+	void insereCaminhosCompletos(vector < vector <int> > &cc, vector <double> &pc, vector <int> pilha, double peso);
+	void escolherMelhorCaminho(vector < vector <int> > &cc, vector <double> &pc);
+
 };
 
 void gerandoCoord(vector <pair <double, double> > &coord, int quantidade);
@@ -39,21 +48,3 @@ double distanciaEntreDoisPonto(double x1, double y1, double x2, double y2);
 int calculaLog(int x);
 int minimo (vector <pair <double, double> > coordDouble);
 
-
-
-
-//PARA VERIFICAR SE EH CONEXO
-class Graph{
-    private:
-        int V;
-        list<int> *adj;
-    public:
-        Graph(int V){
-            this->V = V;
-            adj = new list<int>[V];
-        }
-        void addAresta(int v, int w);
-        void BFS(int s, bool visited[]);
-        Graph getTranspose();
-        bool isConnected();
-};
